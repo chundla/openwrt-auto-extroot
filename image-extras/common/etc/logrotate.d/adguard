@@ -1,0 +1,6 @@
+/var/log/adguard.log {
+	postrotate
+		gzip /var/log/backup_logs/adguard.log-*
+		mv /var/log/backup_logs/adguard.log-*.gz /root/backup_logs/
+	endscript
+}

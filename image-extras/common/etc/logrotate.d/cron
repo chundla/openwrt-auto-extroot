@@ -1,0 +1,8 @@
+/var/log/cron.log {
+	rotate 7
+	postrotate
+		/etc/init.d/cron restart &>/dev/null
+		gzip /var/log/backup_logs/cron.log-*
+		mv /var/log/backup_logs/cron.log-*.gz /root/backup_logs/
+	endscript
+}

@@ -1,0 +1,7 @@
+/var/log/dnsmasq_queries.log {
+	postrotate
+		/etc/init.d/dnsmasq restart &>/dev/null
+		gzip /var/log/backup_logs/dnsmasq_queries.log-*
+		mv /var/log/backup_logs/dnsmasq_queries.log-*.gz /root/backup_logs/
+	endscript
+}

@@ -1,3 +1,5 @@
 # you can put your ssh public key into authorized_keys,
 # but we don't ever want it to be committed to the repo
 authorized_keys
+dropbear_ed25519_host_key
+dropbear_rsa_host_key

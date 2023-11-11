@@ -1,0 +1,7 @@
+/var/log/fail2ban.log {
+	postrotate
+		/etc/init.d/fail2ban restart &>/dev/null
+		gzip /var/log/backup_logs/fail2ban.log-*
+		mv /var/log/backup_logs/fail2ban.log-*.gz /root/backup_logs/
+	endscript
+}

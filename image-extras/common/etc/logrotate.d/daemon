@@ -1,0 +1,6 @@
+/var/log/daemon.log {
+	postrotate
+		gzip /var/log/backup_logs/daemon.log-*
+		mv /var/log/backup_logs/daemon.log-*.gz /root/backup_logs/
+	endscript
+}

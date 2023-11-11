@@ -1,0 +1,7 @@
+/var/log/firewall.log {
+	postrotate
+		/etc/init.d/firewall restart &>/dev/null
+		gzip /var/log/backup_logs/firewall.log-*
+		mv /var/log/backup_logs/firewall.log-*.gz /root/backup_logs/
+	endscript
+}

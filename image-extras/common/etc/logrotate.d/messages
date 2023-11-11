@@ -1,0 +1,6 @@
+/var/log/messages {
+	postrotate
+		gzip /var/log/backup_logs/messages-*
+		mv /var/log/backup_logs/messages-*.gz /root/backup_logs/
+	endscript
+}

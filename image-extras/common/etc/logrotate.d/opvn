@@ -1,0 +1,6 @@
+/var/log/openvpn.log {
+	postrotate
+		gzip /var/log/backup_logs/openvpn.log-*
+		mv /var/log/backup_logs/openvpn.log-*.gz /root/backup_logs/
+	endscript
+}

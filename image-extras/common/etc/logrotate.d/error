@@ -1,0 +1,6 @@
+/var/log/error.log {
+	postrotate
+		gzip /var/log/backup_logs/error.log-*
+		mv /var/log/backup_logs/error.log-*.gz /root/backup_logs/
+	endscript
+}

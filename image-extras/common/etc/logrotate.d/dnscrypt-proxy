@@ -1,0 +1,9 @@
+/var/log/dnscrypt/*.log {
+	olddir /var/log/backup_logs/dnscrypt
+	createolddir
+	sharedscripts
+	postrotate
+		# /etc/init.d/dnscrypt-proxy restart &>/dev/null
+		gzip /var/log/backup_logs/dnscrypt/*.log-* && mv /var/log/backup_logs/dnscrypt/*.log-*.gz /root/backup_logs/dnscrypt/
+	endscript
+}

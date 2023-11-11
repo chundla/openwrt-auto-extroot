@@ -46,29 +46,16 @@ setupPendrivePartitions()
     rereadPartitionTable
 
     log "Creating partitions"
-    # sda1 is 'swap'
-    # sda2 is 'root'
-    # sda3 is 'data', if there's any space left
+    # sda1 is 'root'
     fdisk /dev/sda <<EOF
-o
+
 n
 p
 1
-
-+64M
-n
-p
-2
-
-+512M
-n
-p
-3
 
 
 t
-1
-82
+83
 w
 q
 EOF
@@ -82,38 +69,44 @@ EOF
         sleep 1
     done
 
-    mkswap -L swap -U $swapUUID /dev/sda1
-    mkfs.ext4 -F -L root -U $rootUUID /dev/sda2
-    mkfs.ext4 -F -L data -U $dataUUID /dev/sda3
+    mkfs.ext4 -F -L root -U $rootUUID /dev/sda1
 
     log "Finished setting up filesystems"
 }
 
 setupExtroot()
 {
-    mkdir -p /mnt/extroot/
-    mount -U $rootUUID /mnt/extroot
+    DEVICE="/dev/sda1"
 
-    overlay_root=/mnt/extroot/upper
-
+    eval $(block info ${DEVICE} | grep -o -e 'UUID="\S*"')
+    eval $(block info | grep -o -e 'MOUNT="\S*/overlay"')
+    uci -q delete fstab.extroot
+    uci set fstab.extroot="mount"
+    uci set fstab.extroot.uuid="${UUID}"
+    uci set fstab.extroot.target="${MOUNT}"
+    uci commit fstab
     # at this point we could copy the entire root (a previous version of this script did that), or just the overlay from the flash,
     # but it seems to work fine if we just create an empty overlay that is only replacing the rc.local from the firmware.
 
     # let's write a new rc.local on the extroot that will shadow the one which is in the rom (to run stage2 instead of stage1)
-    mkdir -p ${overlay_root}/etc/
-    cat >${overlay_root}/etc/rc.local <<EOF
+    mount -U $rootUUID /mnt
+    tar -C ${MOUNT} -cvf - . | tar -C /mnt -xf -
+    cat >/mnt/upper/etc/rc.local <<EOF
+
+# performance governor
+echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+
 /root/autoprovision-stage2.sh
-exit 0
 EOF
 
     # TODO FIXME when this below is enabled then Chaos Calmer doesn't turn on the network and the device remains unreachable
 
     # make sure that we shadow the /var -> /tmp symlink in the new extroot, so that /var becomes persistent across reboots.
-#    mkdir -p ${overlay_root}/var
+   # mkdir -p ${overlay_root}/var
     # KLUDGE: /var/state is assumed to be transient, so link it to tmp, see https://dev.openwrt.org/ticket/12228
-#    cd ${overlay_root}/var
-#    ln -s /tmp state
-#    cd -
+   # cd ${overlay_root}/var
+   # ln -s /tmp state
+   # cd -
 
     log "Finished setting up extroot"
 }
@@ -144,5 +137,3 @@ autoprovisionStage1()
     stopSignallingAnything
     reboot
 }
-
-autoprovisionStage1

@@ -1,6 +1,9 @@
 # Put your custom commands here that should be executed once
 # the system init finished. By default this file does nothing.
 
+# performance governor
+echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+
 /root/autoprovision-stage1.sh
 
 exit 0

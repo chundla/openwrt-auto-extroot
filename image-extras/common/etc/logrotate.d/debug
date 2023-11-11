@@ -1,0 +1,6 @@
+/var/log/debug {
+	postrotate
+		gzip /var/log/backup_logs/debug-*
+		mv /var/log/backup_logs/debug-*.gz /root/backup_logs/
+	endscript
+}

@@ -1,0 +1,8 @@
+/var/log/banip.log {
+	postrotate
+		# /etc/init.d/banip restart &>/dev/null
+		gzip /var/log/backup_logs/banip.log-*
+		mv /var/log/backup_logs/banip.log-*.gz /root/backup_logs/
+		/etc/init.d/banip reload &>/dev/null
+	endscript
+}

@@ -1,0 +1,7 @@
+/var/log/mwan3.log {
+	postrotate
+		/etc/init.d/mwan3 restart &>/dev/null
+		gzip /var/log/backup_logs/mwan3.log-*
+		mv /var/log/backup_logs/mwan3.log-*.gz /root/backup_logs/
+	endscript
+}

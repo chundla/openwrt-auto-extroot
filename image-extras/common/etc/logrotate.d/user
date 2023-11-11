@@ -1,0 +1,6 @@
+/var/log/user.log {
+	postrotate
+		gzip /var/log/backup_logs/user.log-*
+		mv /var/log/backup_logs/user.log-*.gz /root/backup_logs/
+	endscript
+}

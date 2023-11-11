@@ -1,0 +1,6 @@
+/var/log/auth.log {
+	postrotate
+		gzip /var/log/backup_logs/auth.log-*
+		mv /var/log/backup_logs/auth.log-*.gz /root/backup_logs/
+	endscript
+}

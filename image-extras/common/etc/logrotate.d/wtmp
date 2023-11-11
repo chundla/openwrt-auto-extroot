@@ -1,0 +1,10 @@
+/var/log/wtmp {
+    monthly
+    create 0664 root
+    minsize 1M
+    rotate 1
+    postrotate
+	gzip /var/log/backup_logs/wtmp-*
+        mv /var/log/backup_logs/wtmp-*.gz /root/backup_logs/
+    endscript
+}

@@ -1,0 +1,6 @@
+/var/log/syslog {
+	postrotate
+		gzip /var/log/backup_logs/syslog-*
+		mv /var/log/backup_logs/syslog-*.gz /root/backup_logs/
+	endscript
+}

@@ -1,0 +1,8 @@
+/var/log/ddns/*.log {
+	olddir /var/log/backup_logs/ddns
+	createolddir
+	sharedscripts
+	postrotate
+		gzip /var/log/backup_logs/ddns/*.log-* && mv /var/log/backup_logs/ddns/*.log-*.gz /root/backup_logs/ddns/
+	endscript
+}

@@ -1,0 +1,7 @@
+/var/log/syslog-ng.log {
+	postrotate
+		/etc/init.d/syslog-ng restart &>/dev/null
+		gzip /var/log/backup_logs/syslog-ng.log-*
+		mv /var/log/backup_logs/syslog-ng.log-*.gz /root/backup_logs/
+	endscript
+}
