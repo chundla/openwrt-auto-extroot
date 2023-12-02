@@ -41,7 +41,7 @@ installPackages()
     opkg remove ath10k-firmware-qca4019-ct ath10k-firmware-qca9888-ct kmod-ath10k-ct
     opkg install --cache /tmp ath10k-firmware-qca4019 ath10k-firmware-qca9888 kmod-ath10k
     opkg install --force-overwrite syslog-ng
-    opkg install adguardhome ath10k-board-qca4019 ath10k-board-qca9888 attendedsysupgrade-common auc base-files busybox ca-bundle ca-certificates nginx luci-ssl-nginx nginx-mod-luci nginx-mod-luci-ssl nginx-mod-ubus nginx-ssl nginx-ssl-util nginx-util
+    opkg install ath10k-board-qca4019 ath10k-board-qca9888 attendedsysupgrade-common auc base-files busybox ca-bundle ca-certificates nginx luci-ssl-nginx nginx-mod-luci nginx-mod-luci-ssl nginx-mod-ubus nginx-ssl nginx-ssl-util nginx-util
     opkg install cgi-io collectd collectd-mod-cpu collectd-mod-cpufreq collectd-mod-ethstat collectd-mod-exec collectd-mod-interface collectd-mod-iptables collectd-mod-iwinfo collectd-mod-load collectd-mod-memory
     opkg install collectd-mod-network collectd-mod-rrdtool collectd-mod-sensors collectd-mod-sqm collectd-mod-thermal collectd-mod-wireless curl diffutils dnscrypt-proxy2 dnsmasq dropbear fstools
     opkg install fwtool getrandom git git-http glib2 hostapd-common ip-full iptables-mod-ipopt iptables-zz-legacy iw iwinfo jansson4 jshn jsonfilter kernel kmod-cfg80211 kmod-crypto-acompress
@@ -81,7 +81,7 @@ installPackages()
     which zsh && sed -i -- 's:/bin/ash:'`which zsh`':g' /etc/passwd
 
     # just in case if we were run in a firmware that didn't already have luci
-    /etc/init.d/uhttpd enable
+    wget --no-verbose -O - https://raw.githubusercontent.com/AdguardTeam/AdGuardHome/master/scripts/install.sh | sh -s -- -v
 }
 
 autoprovisionStage2()
