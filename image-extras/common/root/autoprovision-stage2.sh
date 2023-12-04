@@ -43,7 +43,7 @@ installPackages()
     opkg install --force-overwrite syslog-ng
     opkg install ath10k-board-qca4019 ath10k-board-qca9888 attendedsysupgrade-common auc base-files busybox ca-bundle ca-certificates nginx luci-ssl-nginx nginx-mod-luci nginx-mod-luci-ssl nginx-mod-ubus nginx-ssl nginx-ssl-util nginx-util
     opkg install cgi-io collectd collectd-mod-cpu collectd-mod-cpufreq collectd-mod-ethstat collectd-mod-exec collectd-mod-interface collectd-mod-iptables collectd-mod-iwinfo collectd-mod-load collectd-mod-memory
-    opkg install collectd-mod-network collectd-mod-rrdtool collectd-mod-sensors collectd-mod-sqm collectd-mod-thermal collectd-mod-wireless curl diffutils dnscrypt-proxy2 dnsmasq dropbear fstools
+    opkg install collectd-mod-network collectd-mod-rrdtool collectd-mod-sensors collectd-mod-sqm collectd-mod-thermal collectd-mod-wireless curl diffutils dnscrypt-proxy2 dnsmasq fstools
     opkg install fwtool getrandom git git-http glib2 hostapd-common ip-full iptables-mod-ipopt iptables-zz-legacy iw iwinfo jansson4 jshn jsonfilter kernel kmod-cfg80211 kmod-crypto-acompress
     opkg install kmod-crypto-aead kmod-crypto-ccm kmod-crypto-cmac kmod-crypto-crc32c kmod-crypto-ctr kmod-crypto-gcm kmod-crypto-gf128 kmod-crypto-ghash kmod-crypto-hash kmod-crypto-hmac
     opkg install kmod-crypto-kpp kmod-crypto-lib-chacha20 kmod-crypto-lib-chacha20poly1305 kmod-crypto-lib-curve25519 kmod-crypto-lib-poly1305 kmod-crypto-manager kmod-crypto-null kmod-crypto-rng
@@ -64,24 +64,6 @@ installPackages()
     opkg install ucode ucode-mod-fs ucode-mod-html ucode-mod-math ucode-mod-nl80211 ucode-mod-rtnl ucode-mod-ubus ucode-mod-uci ucode-mod-uloop uhttpd uhttpd-mod-ubus unzip urandom-seed urngd usign wget-ssl 
     opkg install wireguard-tools wireless-regdb wpad-basic-mbedtls xtables-legacy zlib zsh
 
-    # setup ohmyzsh once zsh is installed
-    
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-    # move custom ohmyzsh configurations to ohmyzsh directory
-
-    rm -r /root/.oh-my-zsh/custom
-    cp -r /root/zshcustom/custom /root/.oh-my-zsh/
-    rm /root/.zshrc
-    cp /root/zshcustom/.zshrc /root/.zshrc
-    rm -r /root/zshcustom
-
-    # set zsh as default shell
-
-    which zsh && sed -i -- 's:/bin/ash:'`which zsh`':g' /etc/passwd
-
-    # just in case if we were run in a firmware that didn't already have luci
-    wget --no-verbose -O - https://raw.githubusercontent.com/AdguardTeam/AdGuardHome/master/scripts/install.sh | sh -s -- -v
 }
 
 autoprovisionStage2()
@@ -116,19 +98,6 @@ EOF
 # performance governor
 echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
 
-#Change % when cpu scales up
-echo "5" > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold
-
-#Multiple of sampling rate (.02 seconds) to scale down = .04 seconds
-echo "2" > /sys/devices/system/cpu/cpufreq/ondemand/sampling_down_factor
-
-# min scaling frequency: set to 800MHz because of L2 cache issues
-echo 800000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq
-
-# Disable Airtime Fairness (ATF) (default 3)
-echo 0 > /sys/kernel/debug/ieee80211/phy0/airtime_flags
-echo 0 > /sys/kernel/debug/ieee80211/phy1/airtime_flags
-
 # Revert root shell to ash if zsh is not available
 if grep -q '^root:.*:/usr/bin/zsh$' /etc/passwd && [ ! -x /usr/bin/zsh ]; then
     # zsh is root shell, but zsh was not found or not executable: revert to default ash
@@ -150,6 +119,23 @@ EOF
         uci set system.@system[0].log_size=0
 
         uci commit
+
+        # setup ohmyzsh once zsh is installed
+        sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)">/dev/null
+
+        # move custom ohmyzsh configurations to ohmyzsh directory
+        rm -r /root/.oh-my-zsh/custom
+        cp -r /root/zshcustom/custom /root/.oh-my-zsh/
+        rm /root/.zshrc
+        cp /root/zshcustom/.zshrc /root/.zshrc
+        rm -r /root/zshcustom
+
+        # set zsh as default shell
+        which zsh && sed -i -- 's:/bin/ash:'`which zsh`':g' /etc/passwd
+
+        # install adguardhome
+        wget --no-verbose -O - https://raw.githubusercontent.com/AdguardTeam/AdGuardHome/master/scripts/install.sh | sh -s -- -v
+
         sync
         reboot
     fi
