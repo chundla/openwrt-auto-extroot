@@ -57,7 +57,6 @@ p
 t
 83
 w
-q
 EOF
     log "Finished partitioning /dev/sda using fdisk"
 
@@ -137,3 +136,5 @@ autoprovisionStage1()
     stopSignallingAnything
     reboot
 }
+
+autoprovisionStage1
