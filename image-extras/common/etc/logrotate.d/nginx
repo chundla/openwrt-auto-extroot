@@ -4,6 +4,7 @@
 	sharedscripts
 	postrotate
 		service nginx restart &>/dev/null
-		gzip /var/log/backup_logs/nginx/*.log-* && mv /var/log/backup_logs/nginx/*.log-*.gz /root/backup_logs/nginx/
+		gzip /var/log/backup_logs/nginx/*.log-*
+		mv /var/log/backup_logs/nginx/*.log-*.gz /root/backup_logs/nginx/
 	endscript
 }

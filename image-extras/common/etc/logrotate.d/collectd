@@ -1,0 +1,7 @@
+/var/log/collectd.log {
+	postrotate
+		/etc/init.d/collectd restart &>/dev/null
+		gzip /var/log/backup_logs/collectd.log-*
+		mv /var/log/backup_logs/collectd.log-*.gz /root/backup_logs/
+	endscript
+}
