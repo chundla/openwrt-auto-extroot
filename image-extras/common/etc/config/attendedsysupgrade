@@ -5,5 +5,5 @@ config server 'server'
 config client 'client'
 	option upgrade_packages '1'
 	option auto_search '0'
-	option advanced_mode '1'
+	option advanced_mode '0'
 

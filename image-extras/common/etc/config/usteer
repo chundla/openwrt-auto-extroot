@@ -1,0 +1,15 @@
+
+config usteer
+	option network 'LAN_WLAN'
+	option syslog '1'
+	option local_mode '0'
+	option ipv6 '0'
+	option debug_level '2'
+	option band_steering_min_snr '-70'
+	option roam_trigger_interval '10000'
+	option initial_connect_delay '10000'
+	option min_connect_snr '-60'
+	option min_snr '-65'
+	option signal_diff_threshold '5'
+	option roam_scan_snr '-60'
+

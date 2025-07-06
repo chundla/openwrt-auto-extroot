@@ -90,22 +90,24 @@ setupExtroot()
     # let's write a new rc.local on the extroot that will shadow the one which is in the rom (to run stage2 instead of stage1)
     mount -U $rootUUID /mnt
     tar -C ${MOUNT} -cvf - . | tar -C /mnt -xf -
-    cat >/mnt/upper/etc/rc.local <<EOF
-
+    overlay_root=/mnt/upper
+    mkdir -p ${overlay_root}/etc
+    cat >${overlay_root}/etc/rc.local <<EOF
 # performance governor
 echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
 
 /root/autoprovision-stage2.sh
+exit 0
 EOF
 
     # TODO FIXME when this below is enabled then Chaos Calmer doesn't turn on the network and the device remains unreachable
 
     # make sure that we shadow the /var -> /tmp symlink in the new extroot, so that /var becomes persistent across reboots.
-   # mkdir -p ${overlay_root}/var
+    #mkdir -p ${overlay_root}/var
     # KLUDGE: /var/state is assumed to be transient, so link it to tmp, see https://dev.openwrt.org/ticket/12228
-   # cd ${overlay_root}/var
-   # ln -s /tmp state
-   # cd -
+    #cd ${overlay_root}/var
+    #ln -s /tmp state
+    #cd -
 
     disableStage1
 

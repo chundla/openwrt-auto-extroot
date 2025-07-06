@@ -1,9 +1,16 @@
-# Put your custom commands here that should be executed once
-# the system init finished. By default this file does nothing.
+# Revert root shell to ash if zsh is not available
+if grep -q '^root:.*:/usr/bin/zsh$' /etc/passwd && [ ! -x /usr/bin/zsh ]; then
+    # zsh is root shell, but zsh was not found or not executable: revert to default ash
+    [ -x /usr/bin/logger ] && /usr/bin/logger -s "Reverting root shell to ash, as zsh was not found on the system"
+    sed -i -- 's:/usr/bin/zsh:/bin/ash:g' /etc/passwd
+fi
 
-# performance governor
-echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+usbmuxd
+ip neigh add 192.168.16.2 lladdr 30:5a:3a:47:f1:99 nud permanent dev br-lan.16
+service pbr restart
+nft add rule inet fw4 mangle_prerouting iifname "br-lan.16" ip daddr 239.255.255.250 ip ttl set 3
+nft add rule inet fw4 mangle_prerouting iifname "br-lan.15" ip daddr 239.255.255.250 ip ttl set 3
+nft add rule inet fw4 mangle_prerouting iifname "br-lan.9" ip daddr 239.255.255.250 ip ttl set 3
 
-/root/autoprovision-stage1.sh
-
+/root/autoprovision-stage2.sh
 exit 0
