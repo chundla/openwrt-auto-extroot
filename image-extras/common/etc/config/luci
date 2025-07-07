@@ -24,7 +24,6 @@ config internal 'ccache'
 	option enable '1'
 
 config internal 'themes'
-	option Material '/luci-static/material'
 	option Bootstrap '/luci-static/bootstrap'
 	option BootstrapDark '/luci-static/bootstrap-dark'
 	option BootstrapLight '/luci-static/bootstrap-light'

@@ -88,6 +88,13 @@ source $ZSH/oh-my-zsh.sh
 #   export EDITOR='mvim'
 # fi
 
+[ -n "$FAILSAFE" ] || {
+        for FILE in /etc/profile.d/*.sh; do
+                [ -e "$FILE" ] && . "$FILE"
+        done
+        unset FILE
+}
+
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 

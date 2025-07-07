@@ -1,0 +1,18 @@
+OPKG_CONF="$(uci -q get opkg.defaults.restore)"
+for OPKG_CONF in ${OPKG_CONF}
+do if [ ! -e /etc/opkg-restore-"${OPKG_CONF}" ] \
+&& lock -n /var/lock/opkg-restore \
+&& sleep 10 \
+&& opkg update
+then . /etc/profile.d/opkg.sh
+opkg restore "${OPKG_CONF}" &> \
+/var/log/opkg-restore-"${OPKG_CONF}"
+touch /etc/opkg-restore-"${OPKG_CONF}"
+lock -u /var/lock/opkg-restore
+case "${OPKG_CONF}" in
+(init) ;;
+(*) reboot ;;
+esac
+break
+fi
+done

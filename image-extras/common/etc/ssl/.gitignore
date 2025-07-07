@@ -1,0 +1,8 @@
+*.pem
+*.crt
+*.csr
+*.key
+*.srl
+*.cnf
+certs
+private

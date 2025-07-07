@@ -95,7 +95,25 @@ setupExtroot()
 # performance governor
 echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
 
+# disable firewall
+/etc/init.d/firewall disable
+/etc/init.d/firewall stop
+
+#disable dnsmasq
+/etc/init.d/dnsmasq disable
+/etc/init.d/dnsmasq stop
+
+# Revert root shell to ash if zsh is not available
+if grep -q '^root:.*:/usr/bin/zsh$' /etc/passwd && [ ! -x /usr/bin/zsh ]; then
+    # zsh is root shell, but zsh was not found or not executable: revert to default ash
+    [ -x /usr/bin/logger ] && /usr/bin/logger -s "Reverting root shell to ash, as zsh was not found on the system"
+    sed -i -- 's:/usr/bin/zsh:/bin/ash:g' /etc/passwd
+fi
+
+usbmuxd
+
 /root/autoprovision-stage2.sh
+exit 0
 EOF
 
     # TODO FIXME when this below is enabled then Chaos Calmer doesn't turn on the network and the device remains unreachable

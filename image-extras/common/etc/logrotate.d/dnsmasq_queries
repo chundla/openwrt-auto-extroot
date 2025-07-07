@@ -1,7 +1,8 @@
 /var/log/dnsmasq.log {
 	postrotate
-		/etc/init.d/dnsmasq restart &>/dev/null
 		gzip /var/log/backup_logs/dnsmasq.log-*
 		mv /var/log/backup_logs/dnsmasq.log-*.gz /root/backup_logs/
+		/etc/init.d/dnsmasq restart &>/dev/null
+		/etc/init.d/pbr restart &>/dev/null
 	endscript
 }

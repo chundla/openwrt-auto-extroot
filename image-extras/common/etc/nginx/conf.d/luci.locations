@@ -1,0 +1,37 @@
+location /cgi-bin/luci {
+		index index.html;
+		include uwsgi_params;
+		uwsgi_param SERVER_ADDR $server_addr;
+		uwsgi_modifier1 9;
+		uwsgi_pass unix:////var/run/luci-webui.socket;
+}
+
+location ~ /cgi-bin/cgi-(backup|download|upload|exec) {
+		include uwsgi_params;
+		uwsgi_param SERVER_ADDR $server_addr;
+		uwsgi_modifier1 9;
+		uwsgi_pass unix:////var/run/luci-cgi_io.socket;
+}
+
+location /luci-static {
+    	error_log stderr crit;
+}
+
+location /ubus {
+    	ubus_interpreter;
+    	ubus_socket_path /var/run/ubus/ubus.sock;
+    	ubus_parallel_req 2;
+}
+
+#location /adguard/ {
+#    	proxy_pass http://192.168.16.1:8080/;
+#    	proxy_redirect / /adguard/;
+#    	proxy_cookie_path / /adguard/;
+#}
+#
+#location /piadguard/ {
+#    	proxy_pass http://192.168.16.4:15430/;
+#    	proxy_redirect / /piadguard/;
+#    	proxy_cookie_path / /piadguard/;
+#}
+
