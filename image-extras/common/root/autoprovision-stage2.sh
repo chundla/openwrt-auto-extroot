@@ -10,8 +10,14 @@ installPackages()
 
     until (opkg update)
      do
-      log "opkg update failed. No internet connection? Retrying in 15 seconds..."
-       sleep 15
+        cat >/etc/resolv.conf <<EOF
+search ld.lan
+nameserver 9.9.9.9
+nameserver 9.9.9.11
+EOF
+        sleep 30
+        log "opkg update failed. No internet connection? Retrying in 15 seconds..."
+        sleep 15
         # Initiate a synchronous time update.
         ntpd -d -q -n -p openwrt.pool.ntp.org
     done
